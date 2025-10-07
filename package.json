@@ -1,21 +1,49 @@
 {
-  "name": "strategic-intelligence-d1-mcp",
+  "name": "@semanticintent/semantic-d1-mcp",
   "version": "1.0.0",
-  "description": "D1 Database MCP Server for Strategic Intelligence Hub",
+  "description": "Reference implementation of Semantic Intent patterns for D1 Database introspection via MCP",
+  "keywords": [
+    "mcp",
+    "semantic-intent",
+    "d1-database",
+    "cloudflare",
+    "database-introspection",
+    "schema-analysis",
+    "semantic-anchoring",
+    "hexagonal-architecture"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/semanticintent/semantic-d1-mcp.git"
+  },
+  "author": "semanticintent",
   "main": "dist/index.js",
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "dev": "tsc && node dist/index.js",
+    "dev": "tsx watch src/index.ts",
     "start": "node dist/index.js",
-    "test": "npm run build && echo '{\"name\": \"analyze_database_schema\", \"arguments\": {\"environment\": \"development\"}}' | node dist/index.js"
+    "type-check": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest run --coverage",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write ."
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.17.1",
     "dotenv": "^17.2.1"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.2.5",
     "@types/node": "^20.10.0",
-    "typescript": "^5.3.0"
+    "@vitest/coverage-v8": "^3.2.4",
+    "@vitest/ui": "^3.2.4",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3",
+    "vitest": "^3.2.4"
   }
 }
