@@ -95,8 +95,8 @@ export interface ForeignKeyAnalysis {
 	column: string;
 	referencedTable: string;
 	referencedColumn: string;
-	onDelete: 'CASCADE' | 'SET NULL' | 'RESTRICT' | 'NO ACTION' | null;
-	onUpdate: 'CASCADE' | 'SET NULL' | 'RESTRICT' | 'NO ACTION' | null;
+	onDelete: 'CASCADE' | 'SET NULL' | 'SET DEFAULT' | 'RESTRICT' | 'NO ACTION' | null;
+	onUpdate: 'CASCADE' | 'SET NULL' | 'SET DEFAULT' | 'RESTRICT' | 'NO ACTION' | null;
 }
 
 /**

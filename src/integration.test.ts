@@ -19,6 +19,7 @@ import { ICacheProvider } from './application/ports/ICacheProvider';
 import { DatabaseConfig } from './infrastructure/config/DatabaseConfig';
 import { Environment } from './domain/value-objects/Environment';
 import { DatabaseSchema } from './domain/entities/DatabaseSchema';
+import { TableInfo } from './domain/entities/TableInfo';
 
 describe('Integration Tests', () => {
 	let mcpServer: D1DatabaseMCPServer;
@@ -279,12 +280,9 @@ describe('Integration Tests', () => {
 					'staging-db-456': Environment.STAGING,
 					'prod-db-789': Environment.PRODUCTION,
 				};
-				return {
-					name: 'test',
-					environment: envMap[dbId],
-					tables: [],
-					fetchedAt: new Date(),
-				};
+				const dummyColumn = { name: 'id', type: 'INTEGER', isPrimaryKey: true, isNullable: false, defaultValue: null };
+				const dummyTable = new TableInfo('test_table', 'table', [dummyColumn as any], [], []);
+				return new DatabaseSchema('test', envMap[dbId], [dummyTable], new Date());
 			});
 
 			await (mcpServer as any).handleAnalyzeSchema({ environment: 'development', includeSamples: false });

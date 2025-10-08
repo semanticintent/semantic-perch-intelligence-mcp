@@ -283,8 +283,8 @@ export class CloudflareD1Repository implements ICloudflareD1Repository {
 				fkRow.from,
 				fkRow.table,
 				fkRow.to,
-				fkRow.on_delete ?? 'NO ACTION',
-				fkRow.on_update ?? 'NO ACTION',
+				(fkRow.on_delete as any) ?? 'NO ACTION',
+				(fkRow.on_update as any) ?? 'NO ACTION',
 			);
 
 			foreignKeys.push(foreignKey);

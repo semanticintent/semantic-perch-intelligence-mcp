@@ -107,10 +107,10 @@ export class SuggestOptimizationsUseCase {
 		}
 
 		// Extract relationships from schema
-		const relationships = this.relationshipAnalyzer.extractRelationships(schema.tables);
+		const relationships = this.relationshipAnalyzer.extractRelationships([...schema.tables]);
 
 		// Get optimization suggestions from domain service
-		const optimizations = this.optimizationService.analyzeSchema(schema.tables, relationships);
+		const optimizations = this.optimizationService.analyzeSchema([...schema.tables], relationships);
 
 		// Map domain Optimization entities to response DTOs
 		const suggestions = optimizations.map((opt) => this.mapOptimizationToSuggestion(opt));

@@ -72,11 +72,20 @@ Built on research from [Semantic Intent as Single Source of Truth](https://githu
    CLOUDFLARE_ACCOUNT_ID=your_cloudflare_account_id
    CLOUDFLARE_API_TOKEN=your_cloudflare_api_token
 
-   # D1 Database IDs
+   # D1 Database Configuration - Development
    D1_DEV_DATABASE_ID=your_dev_database_id
+   D1_DEV_DATABASE_NAME=your_dev_database_name
+
+   # D1 Database Configuration - Staging (Optional)
    D1_STAGING_DATABASE_ID=your_staging_database_id
+   D1_STAGING_DATABASE_NAME=your_staging_database_name
+
+   # D1 Database Configuration - Production (Optional)
    D1_PROD_DATABASE_ID=your_prod_database_id
+   D1_PROD_DATABASE_NAME=your_prod_database_name
    ```
+
+   **Note**: At least one database environment must be configured.
 
 4. **Build the server**
    ```bash
@@ -118,18 +127,20 @@ Copy the database IDs to your `.env` file.
 
 ## 🛠️ MCP Tools
 
-This server provides **6 comprehensive MCP tools** for D1 database introspection:
+This server provides **4 comprehensive MCP tools** for D1 database introspection:
 
 ### 1. **analyze_database_schema**
 Analyze complete database schema structure with metadata and optional sample data.
 
 **Parameters:**
 - `environment` (required): `"development"` | `"staging"` | `"production"`
-- `include_samples` (optional, default: `true`): Include sample data from tables
+- `includeSamples` (optional, default: `true`): Include sample data from tables
+- `maxSampleRows` (optional, default: `5`): Maximum rows per table sample
 
 **Returns:**
 - Complete schema analysis
 - Table structures with columns, types, constraints
+- Indexes and foreign keys
 - Sample data from each table (if enabled)
 - Schema metadata and statistics
 
@@ -139,7 +150,8 @@ Analyze complete database schema structure with metadata and optional sample dat
   "name": "analyze_database_schema",
   "arguments": {
     "environment": "development",
-    "include_samples": true
+    "includeSamples": true,
+    "maxSampleRows": 5
   }
 }
 ```
@@ -149,13 +161,12 @@ Extract and analyze foreign key relationships between tables.
 
 **Parameters:**
 - `environment` (required): Database environment
-- `table_name` (optional): Filter relationships for specific table
+- `tableName` (optional): Filter relationships for specific table
 
 **Returns:**
-- Foreign key relationships
-- Referential integrity rules
-- Table dependency graph
-- Cascade/restrict semantics
+- Foreign key relationships with cardinality (one-to-many, many-to-one)
+- Referential integrity rules (CASCADE, SET NULL, etc.)
+- Relationship metadata and statistics
 
 **Example:**
 ```json
@@ -163,45 +174,42 @@ Extract and analyze foreign key relationships between tables.
   "name": "get_table_relationships",
   "arguments": {
     "environment": "production",
-    "table_name": "users"
+    "tableName": "users"
   }
 }
 ```
 
-### 3. **validate_integration_schema**
-Validate TypeScript interfaces against database schema (future implementation).
+### 3. **validate_database_schema**
+Validate database schema for common issues and anti-patterns.
 
 **Parameters:**
-- `component_interfaces`: Array of TypeScript interface definitions
-- `environment`: Target database environment
+- `environment` (required): Database environment
 
 **Returns:**
-- Compatibility validation results
-- Missing or incompatible fields
-- Type mismatch warnings
+- Schema validation results
+- Missing primary keys
+- Foreign keys without indexes
+- Naming convention violations
+- Tables without relationships
 
-### 4. **get_data_usage_patterns**
-Analyze data usage patterns and query statistics (requires query logging).
+**Example:**
+```json
+{
+  "name": "validate_database_schema",
+  "arguments": {
+    "environment": "production"
+  }
+}
+```
 
-**Parameters:**
-- `table_name` (optional): Specific table to analyze
-- `days_back` (default: 7): Analysis time window
-
-**Returns:**
-- Query frequency statistics
-- Most/least queried tables
-- Popular join patterns
-
-**Note**: Requires query logging to be enabled on your D1 database.
-
-### 5. **suggest_database_optimizations**
+### 4. **suggest_database_optimizations**
 Generate schema optimization recommendations based on structure analysis.
 
 **Parameters:**
 - `environment` (required): Database environment
-- `focus_area` (optional): Filter recommendations (e.g., "index", "primary_key")
 
 **Returns:**
+- Prioritized optimization suggestions (high/medium/low)
 - Missing index recommendations
 - Primary key suggestions
 - Schema improvement opportunities
@@ -212,24 +220,10 @@ Generate schema optimization recommendations based on structure analysis.
 {
   "name": "suggest_database_optimizations",
   "arguments": {
-    "environment": "production",
-    "focus_area": "index"
+    "environment": "production"
   }
 }
 ```
-
-### 6. **get_index_information**
-Retrieve detailed index information and coverage analysis.
-
-**Parameters:**
-- `environment` (required): Database environment
-- `table_name` (optional): Filter indexes for specific table
-
-**Returns:**
-- Index definitions
-- Column coverage
-- Index types (unique, composite, etc.)
-- Indexing recommendations
 
 ---
 
@@ -255,8 +249,11 @@ Connect this MCP server to Claude Desktop for AI-assisted database development.
         "CLOUDFLARE_ACCOUNT_ID": "your_account_id",
         "CLOUDFLARE_API_TOKEN": "your_api_token",
         "D1_DEV_DATABASE_ID": "your_dev_db_id",
+        "D1_DEV_DATABASE_NAME": "your_dev_db_name",
         "D1_STAGING_DATABASE_ID": "your_staging_db_id",
-        "D1_PROD_DATABASE_ID": "your_prod_db_id"
+        "D1_STAGING_DATABASE_NAME": "your_staging_db_name",
+        "D1_PROD_DATABASE_ID": "your_prod_db_id",
+        "D1_PROD_DATABASE_NAME": "your_prod_db_name"
       }
     }
   }
@@ -265,7 +262,7 @@ Connect this MCP server to Claude Desktop for AI-assisted database development.
 
 3. **Restart Claude Desktop**
 
-4. **Verify tools are available** - You should see 6 D1 tools in Claude's tool list
+4. **Verify tools are available** - You should see 4 D1 tools in Claude's tool list
 
 ### Usage Example
 
@@ -304,22 +301,28 @@ This project demonstrates **Domain-Driven Hexagonal Architecture** with clean se
 └─────────────────────────────────────────────────────────┘
 ```
 
-### Current State (Pre-Refactoring)
+### Implementation Status
 
-**Status**: Monolithic implementation (629 lines in single file)
+**Status**: ✅ Hexagonal architecture refactoring complete
 
-The current codebase is a functional but monolithic implementation. See [D1_MCP_REFACTORING_PLAN.md](D1_MCP_REFACTORING_PLAN.md) for the complete refactoring roadmap to hexagonal architecture.
-
-### Target Architecture (Post-Refactoring)
-
-**Planned Structure**:
+**Current Structure**:
 ```
 src/
 ├── domain/              # Business logic (entities, services)
+│   ├── entities/        # DatabaseSchema, TableInfo, Column, etc.
+│   ├── services/        # SchemaAnalyzer, RelationshipAnalyzer, etc.
+│   ├── repositories/    # Port interfaces
+│   └── value-objects/   # Environment enum
 ├── application/         # Use cases and orchestration
-├── infrastructure/      # Cloudflare D1 adapter
+│   ├── use-cases/       # AnalyzeSchema, GetRelationships, etc.
+│   └── ports/           # Cache provider interface
+├── infrastructure/      # External adapters
+│   ├── adapters/        # CloudflareD1Repository, Cache
+│   ├── config/          # CloudflareConfig, DatabaseConfig
+│   └── http/            # CloudflareAPIClient
 ├── presentation/        # MCP protocol layer
-└── index.ts            # Composition root
+│   └── mcp/             # D1DatabaseMCPServer
+└── index.ts             # Composition root (DI)
 ```
 
 See [ARCHITECTURE.md](ARCHITECTURE.md) for detailed design documentation.
@@ -382,21 +385,20 @@ See [SEMANTIC_ANCHORING_GOVERNANCE.md](SEMANTIC_ANCHORING_GOVERNANCE.md) for com
 
 ## 🧪 Testing
 
-**Current State**: Pre-refactoring (no tests yet)
+**Status**: ✅ Comprehensive test suite with 398 tests passing
 
-**Target**: 90%+ coverage with comprehensive test suite
+### Test Coverage
 
-### Planned Test Coverage (Post-Refactoring)
+- ✅ **Domain Layer**: 212 tests (entities, services, validation)
+- ✅ **Infrastructure Layer**: 64 tests (D1 adapter, API client, config)
+- ✅ **Application Layer**: 35 tests (use cases, orchestration)
+- ✅ **Presentation Layer**: 13 tests (MCP server, tool routing)
+- ✅ **Integration**: 15 tests (end-to-end flows)
+- ✅ **Value Objects**: 59 tests (Environment, immutability)
 
-- ✅ **Domain Layer**: 55+ tests (entities, services, validation)
-- ✅ **Infrastructure Layer**: 30+ tests (D1 adapter, API client)
-- ✅ **Application Layer**: 16+ tests (use cases, orchestration)
-- ✅ **Presentation Layer**: 12+ tests (MCP server, tool routing)
-- ✅ **Integration**: 15+ tests (end-to-end flows)
+**Total**: 398 tests (all passing ✅)
 
-**Total Target**: 128+ tests
-
-### Running Tests (After Phase 2 Implementation)
+### Running Tests
 
 ```bash
 # Run all tests
@@ -416,7 +418,7 @@ npm run test:coverage
 
 - **Vitest**: Fast unit testing framework
 - **@vitest/coverage-v8**: Code coverage reports
-- **Mock Strategy**: Mock Cloudflare D1 API responses
+- **Mock Strategy**: Mock Cloudflare D1 API responses via interface implementations
 
 ---
 
@@ -426,16 +428,18 @@ This codebase serves as a **reference implementation** for semantic intent patte
 
 ### Key Files to Study
 
-**Current Implementation**:
-- [src/index.ts](src/index.ts) - Complete MCP server (pre-refactoring)
-- [D1_MCP_REFACTORING_PLAN.md](D1_MCP_REFACTORING_PLAN.md) - Comprehensive refactoring plan
-- [SEMANTIC_ANCHORING_GOVERNANCE.md](SEMANTIC_ANCHORING_GOVERNANCE.md) - Governance rules
+**Hexagonal Architecture Implementation**:
+- [src/index.ts](src/index.ts) - Composition root with dependency injection
+- [src/domain/entities/](src/domain/entities/) - Domain entities with semantic validation
+- [src/domain/services/](src/domain/services/) - Pure business logic services
+- [src/application/use-cases/](src/application/use-cases/) - Orchestration layer
+- [src/infrastructure/adapters/](src/infrastructure/adapters/) - External adapters
+- [src/presentation/mcp/](src/presentation/mcp/) - MCP protocol layer
 
-**Post-Refactoring** (coming soon):
-- Domain entities with semantic validation
-- Schema analysis services (pure business logic)
-- Cloudflare D1 adapter (infrastructure isolation)
-- MCP protocol layer (presentation separation)
+**Reference Documentation**:
+- [D1_MCP_REFACTORING_PLAN.md](D1_MCP_REFACTORING_PLAN.md) - Complete refactoring plan
+- [SEMANTIC_ANCHORING_GOVERNANCE.md](SEMANTIC_ANCHORING_GOVERNANCE.md) - Governance rules
+- [ARCHITECTURE.md](ARCHITECTURE.md) - Architecture details
 
 ### Related Projects
 
@@ -516,23 +520,41 @@ This implementation is based on the research paper **"Semantic Intent as Single 
 - D1 REST API integration
 - Basic schema analysis
 
-### 🚧 Phase 1: Foundation & Setup (In Progress)
-- Documentation (README, ARCHITECTURE, CONTRIBUTING)
-- Testing infrastructure (Vitest, coverage)
-- CI/CD pipeline (GitHub Actions)
-- Semantic governance documentation
+### ✅ Phase 1: Domain Layer (Complete)
+- 10 domain entities with semantic validation
+- 3 domain services (SchemaAnalyzer, RelationshipAnalyzer, OptimizationService)
+- 212 passing tests
 
-### 📋 Phase 2-6: Hexagonal Architecture Refactoring (Planned)
-- Domain layer implementation
-- Infrastructure adapters
-- Application use cases
-- Presentation layer (MCP)
-- Comprehensive test suite (128+ tests)
+### ✅ Phase 2: Infrastructure Layer (Complete)
+- CloudflareD1Repository adapter
+- CloudflareAPIClient HTTP client
+- InMemoryCacheProvider
+- 64 passing tests
 
-### 🎯 Phase 7-9: Production Readiness (Planned)
-- GitHub Actions CI/CD
+### ✅ Phase 3: Application Layer (Complete)
+- 4 use cases (AnalyzeSchema, GetRelationships, ValidateSchema, SuggestOptimizations)
+- Port interfaces (ICloudflareD1Repository, ICacheProvider)
+- 35 passing tests
+
+### ✅ Phase 4: Presentation Layer (Complete)
+- D1DatabaseMCPServer with 4 MCP tools
+- Request/response DTOs
+- 13 passing tests
+
+### ✅ Phase 5: Integration & Composition Root (Complete)
+- Dependency injection in index.ts
+- Environment configuration
+- 15 integration tests
+
+### ✅ Phase 6: CI/CD & Documentation (Complete)
+- TypeScript build verification
+- README updated
+- 398 total tests passing
+
+### 🎯 Phase 7: Production Readiness (Planned)
+- GitHub Actions CI/CD workflow
 - Dependabot automation
-- Complete documentation
+- Security scanning
 - GitHub repository setup
 
 See [D1_MCP_REFACTORING_PLAN.md](D1_MCP_REFACTORING_PLAN.md) for detailed roadmap.

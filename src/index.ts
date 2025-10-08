@@ -116,9 +116,9 @@ async function main() {
 		);
 
 		const apiClient = new CloudflareAPIClient(cloudflareConfig);
-		const repository = new CloudflareD1Repository(apiClient);
 		const cache = new InMemoryCacheProvider();
 		const databaseConfig = createDatabaseConfig();
+		const repository = new CloudflareD1Repository(apiClient, databaseConfig);
 
 		// Log configured environments
 		const configuredEnvs = Array.from(databaseConfig['databases'].keys());

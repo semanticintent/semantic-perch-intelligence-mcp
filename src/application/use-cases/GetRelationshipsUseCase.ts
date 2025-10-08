@@ -57,8 +57,8 @@ export interface RelationshipDTO {
 	fromColumn: string;
 	toTable: string;
 	toColumn: string;
-	onDelete: 'CASCADE' | 'SET NULL' | 'RESTRICT' | 'NO ACTION' | null;
-	onUpdate: 'CASCADE' | 'SET NULL' | 'RESTRICT' | 'NO ACTION' | null;
+	onDelete: 'CASCADE' | 'SET NULL' | 'SET DEFAULT' | 'RESTRICT' | 'NO ACTION' | null;
+	onUpdate: 'CASCADE' | 'SET NULL' | 'SET DEFAULT' | 'RESTRICT' | 'NO ACTION' | null;
 	isRequired: boolean;
 }
 
@@ -92,7 +92,7 @@ export class GetRelationshipsUseCase {
 		const schema = await this.getSchema(environment);
 
 		// Extract relationships using domain service
-		const allRelationships = this.relationshipAnalyzer.extractRelationships(schema.tables);
+		const allRelationships = this.relationshipAnalyzer.extractRelationships([...schema.tables]);
 
 		// Filter by table if specified
 		const relationships = request.tableName
