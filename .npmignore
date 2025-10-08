@@ -1,0 +1,42 @@
+# Source files
+src/
+*.test.ts
+*.spec.ts
+
+# Configuration
+.env
+.env.*
+.env.backup
+.env.example
+tsconfig.json
+biome.json
+vitest.config.ts
+
+# Git
+.git/
+.gitignore
+.github/
+
+# Documentation (keep README, LICENSE, CHANGELOG)
+ARCHITECTURE.md
+D1_MCP_REFACTORING_PLAN.md
+CONTRIBUTING.md
+CODE_OF_CONDUCT.md
+SEMANTIC_ANCHORING_GOVERNANCE.md
+
+# Development
+coverage/
+.nyc_output/
+node_modules/
+*.log
+.vscode/
+.idea/
+
+# Testing
+*.test.js
+*.spec.js
+integration.test.js
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,6 +1,6 @@
 {
   "name": "@semanticintent/semantic-d1-mcp",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Reference implementation of Semantic Intent patterns for D1 Database introspection via MCP",
   "keywords": [
     "mcp",
@@ -17,8 +17,21 @@
     "type": "git",
     "url": "https://github.com/semanticintent/semantic-d1-mcp.git"
   },
+  "bugs": {
+    "url": "https://github.com/semanticintent/semantic-d1-mcp/issues"
+  },
+  "homepage": "https://github.com/semanticintent/semantic-d1-mcp#readme",
   "author": "semanticintent",
   "main": "dist/index.js",
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "scripts": {
     "build": "tsc",
     "dev": "tsx watch src/index.ts",
@@ -30,7 +43,8 @@
     "test:coverage": "vitest run --coverage",
     "lint": "biome check .",
     "lint:fix": "biome check --write .",
-    "format": "biome format --write ."
+    "format": "biome format --write .",
+    "prepublishOnly": "npm run build && npm test"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.17.1",
