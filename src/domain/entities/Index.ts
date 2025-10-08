@@ -6,6 +6,7 @@
  * - tableName: Table being indexed
  * - columns: Indexed columns (order matters for composite indexes)
  * - isUnique: Semantic uniqueness constraint
+ * - isPrimaryKey: Indicates if this is a primary key index
  *
  * OBSERVABLE PROPERTIES: Directly observable from sqlite_master
  * SEMANTIC ANCHORING: Indexes indicate intentional query optimization
@@ -13,67 +14,75 @@
  */
 
 export class Index {
-  public readonly name: string;
-  public readonly tableName: string;
-  public readonly columns: readonly string[];
-  public readonly isUnique: boolean;
+	public readonly name: string;
+	public readonly tableName: string;
+	public readonly columns: readonly string[];
+	public readonly isUnique: boolean;
+	public readonly isPrimaryKey: boolean;
 
-  constructor(name: string, tableName: string, columns: string[], isUnique: boolean = false) {
-    if (!name || name.trim().length === 0) {
-      throw new Error('Index name cannot be empty');
-    }
+	constructor(
+		name: string,
+		tableName: string,
+		columns: string[],
+		isUnique: boolean = false,
+		isPrimaryKey: boolean = false,
+	) {
+		if (!name || name.trim().length === 0) {
+			throw new Error('Index name cannot be empty');
+		}
 
-    if (!tableName || tableName.trim().length === 0) {
-      throw new Error('Table name cannot be empty');
-    }
+		if (!tableName || tableName.trim().length === 0) {
+			throw new Error('Table name cannot be empty');
+		}
 
-    if (!columns || columns.length === 0) {
-      throw new Error('Index must have at least one column');
-    }
+		if (!columns || columns.length === 0) {
+			throw new Error('Index must have at least one column');
+		}
 
-    if (columns.some((col) => !col || col.trim().length === 0)) {
-      throw new Error('Index column names cannot be empty');
-    }
+		if (columns.some((col) => !col || col.trim().length === 0)) {
+			throw new Error('Index column names cannot be empty');
+		}
 
-    this.name = name.trim();
-    this.tableName = tableName.trim();
-    this.columns = Object.freeze([...columns.map((col) => col.trim())]);
-    this.isUnique = isUnique;
+		this.name = name.trim();
+		this.tableName = tableName.trim();
+		this.columns = Object.freeze([...columns.map((col) => col.trim())]);
+		this.isUnique = isUnique;
+		this.isPrimaryKey = isPrimaryKey;
 
-    Object.freeze(this);
-  }
+		Object.freeze(this);
+	}
 
-  /**
-   * Check if this is a composite index (multiple columns)
-   *
-   * Semantic: Composite indexes optimize multi-column queries
-   */
-  isComposite(): boolean {
-    return this.columns.length > 1;
-  }
+	/**
+	 * Check if this is a composite index (multiple columns)
+	 *
+	 * Semantic: Composite indexes optimize multi-column queries
+	 */
+	isComposite(): boolean {
+		return this.columns.length > 1;
+	}
 
-  /**
-   * Check if index covers a specific column
-   *
-   * Observable: Column coverage is directly observable
-   */
-  coversColumn(columnName: string): boolean {
-    return this.columns.includes(columnName);
-  }
+	/**
+	 * Check if index covers a specific column
+	 *
+	 * Observable: Column coverage is directly observable
+	 */
+	coversColumn(columnName: string): boolean {
+		return this.columns.includes(columnName);
+	}
 
-  /**
-   * Check if index is the first column (most selective)
-   *
-   * Semantic: First column in composite index can be used alone
-   */
-  hasColumnAsPrefix(columnName: string): boolean {
-    return this.columns[0] === columnName;
-  }
+	/**
+	 * Check if index is the first column (most selective)
+	 *
+	 * Semantic: First column in composite index can be used alone
+	 */
+	hasColumnAsPrefix(columnName: string): boolean {
+		return this.columns[0] === columnName;
+	}
 
-  /**
-   * Get index column count
-   */
-  getColumnCount(): number {
-    return this.columns.length;
-  }
+	/**
+	 * Get index column count
+	 */
+	getColumnCount(): number {
+		return this.columns.length;
+	}
 }
