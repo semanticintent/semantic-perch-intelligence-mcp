@@ -33,8 +33,9 @@ import { Environment } from './domain/value-objects/Environment.js';
 
 /**
  * Load environment configuration
+ * Silent mode to prevent stdout pollution (MCP uses stdio for communication)
  */
-dotenv.config();
+dotenv.config({ debug: false });
 
 /**
  * Validate required environment variables
