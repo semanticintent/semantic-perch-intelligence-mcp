@@ -1,3 +1,5 @@
+import type { ICEScore } from '../value-objects/ICEScore';
+
 /**
  * 🎯 SEMANTIC INTENT: Optimization represents a schema improvement recommendation
  *
@@ -9,6 +11,7 @@
  * VALUE OBJECT: Represents an immutable recommendation
  * SEMANTIC ANCHORING: Based on schema structure, not runtime behavior
  * IMMUTABILITY: Frozen to preserve recommendation integrity
+ * ICE SCORING: Priority derived from Intent-Chirp-Engine multi-dimensional score
  */
 
 export type OptimizationType =
@@ -27,6 +30,7 @@ export class Optimization {
   public readonly reason: string;
   public readonly suggestion: string;
   public readonly priority: OptimizationPriority;
+  public readonly iceScore: ICEScore | null;
 
   constructor(
     type: OptimizationType,
@@ -34,7 +38,8 @@ export class Optimization {
     reason: string,
     suggestion: string,
     priority: OptimizationPriority,
-    column: string | null = null
+    column: string | null = null,
+    iceScore: ICEScore | null = null
   ) {
     if (!table || table.trim().length === 0) {
       throw new Error('Optimization table cannot be empty');
@@ -46,14 +51,38 @@ export class Optimization {
       throw new Error('Optimization suggestion cannot be empty');
     }
 
+    // If ICE score provided, priority must match its derived priority
+    if (iceScore && priority !== iceScore.priority) {
+      throw new Error(
+        `Priority '${priority}' does not match ICEScore priority '${iceScore.priority}'. Use ICEScore.priority or omit priority parameter.`
+      );
+    }
+
     this.type = type;
     this.table = table.trim();
     this.column = column?.trim() || null;
     this.reason = reason.trim();
     this.suggestion = suggestion.trim();
     this.priority = priority;
+    this.iceScore = iceScore;
 
     Object.freeze(this);
+  }
+
+  /**
+   * Create optimization with ICE scoring
+   *
+   * Semantic: Priority derived from ICE score, not manually assigned
+   */
+  static withICEScore(
+    type: OptimizationType,
+    table: string,
+    reason: string,
+    suggestion: string,
+    iceScore: ICEScore,
+    column: string | null = null
+  ): Optimization {
+    return new Optimization(type, table, reason, suggestion, iceScore.priority, column, iceScore);
   }
 
   /**
@@ -77,7 +106,14 @@ export class Optimization {
    */
   getDescription(): string {
     const location = this.column ? `${this.table}.${this.column}` : this.table;
-    return `[${this.priority.toUpperCase()}] ${this.type} on ${location}: ${this.reason}`;
+    const baseDescription = `[${this.priority.toUpperCase()}] ${this.type} on ${location}: ${this.reason}`;
+
+    // If ICE score available, include it
+    if (this.iceScore) {
+      return `${baseDescription}\n${this.iceScore.getDescription()}`;
+    }
+
+    return baseDescription;
   }
 
   /**
@@ -85,5 +121,19 @@ export class Optimization {
    */
   isIndexOptimization(): boolean {
     return this.type === 'missing_index' || this.type === 'redundant_index';
+  }
+
+  /**
+   * Check if this optimization has ICE scoring
+   */
+  hasICEScore(): boolean {
+    return this.iceScore !== null;
+  }
+
+  /**
+   * Get ICE combined score if available
+   */
+  getICECombinedScore(): number | null {
+    return this.iceScore?.combined ?? null;
   }
 }
