@@ -25,6 +25,7 @@ const AnalyzeSchemaUseCase_js_1 = require("./application/use-cases/AnalyzeSchema
 const GetRelationshipsUseCase_js_1 = require("./application/use-cases/GetRelationshipsUseCase.js");
 const ValidateSchemaUseCase_js_1 = require("./application/use-cases/ValidateSchemaUseCase.js");
 const SuggestOptimizationsUseCase_js_1 = require("./application/use-cases/SuggestOptimizationsUseCase.js");
+const CompareSchemasUseCase_js_1 = require("./application/use-cases/CompareSchemasUseCase.js");
 const SchemaAnalyzer_js_1 = require("./domain/services/SchemaAnalyzer.js");
 const RelationshipAnalyzer_js_1 = require("./domain/services/RelationshipAnalyzer.js");
 const OptimizationService_js_1 = require("./domain/services/OptimizationService.js");
@@ -119,8 +120,9 @@ async function main() {
         const getRelationshipsUseCase = new GetRelationshipsUseCase_js_1.GetRelationshipsUseCase(repository, relationshipAnalyzer, databaseConfig, cache);
         const validateSchemaUseCase = new ValidateSchemaUseCase_js_1.ValidateSchemaUseCase(repository, schemaAnalyzer, databaseConfig, cache);
         const suggestOptimizationsUseCase = new SuggestOptimizationsUseCase_js_1.SuggestOptimizationsUseCase(repository, optimizationService, relationshipAnalyzer, databaseConfig, cache);
+        const compareSchemasUseCase = new CompareSchemasUseCase_js_1.CompareSchemasUseCase(repository);
         // Presentation Layer - MCP Server
-        const mcpServer = new MCPServer_js_1.D1DatabaseMCPServer(analyzeSchemaUseCase, getRelationshipsUseCase, validateSchemaUseCase, suggestOptimizationsUseCase);
+        const mcpServer = new MCPServer_js_1.D1DatabaseMCPServer(analyzeSchemaUseCase, getRelationshipsUseCase, validateSchemaUseCase, suggestOptimizationsUseCase, compareSchemasUseCase);
         // Start the server
         await mcpServer.start();
         console.error('✅ PerchIQX MCP Server running on stdio');

@@ -4,6 +4,7 @@ import { AnalyzeSchemaUseCase } from '../../application/use-cases/AnalyzeSchemaU
 import { GetRelationshipsUseCase } from '../../application/use-cases/GetRelationshipsUseCase';
 import { ValidateSchemaUseCase } from '../../application/use-cases/ValidateSchemaUseCase';
 import { SuggestOptimizationsUseCase } from '../../application/use-cases/SuggestOptimizationsUseCase';
+import { CompareSchemasUseCase } from '../../application/use-cases/CompareSchemasUseCase';
 import { Environment } from '../../domain/value-objects/Environment';
 
 describe('D1DatabaseMCPServer', () => {
@@ -12,6 +13,7 @@ describe('D1DatabaseMCPServer', () => {
 	let mockGetRelationshipsUseCase: GetRelationshipsUseCase;
 	let mockValidateSchemaUseCase: ValidateSchemaUseCase;
 	let mockSuggestOptimizationsUseCase: SuggestOptimizationsUseCase;
+	let mockCompareSchemasUseCase: CompareSchemasUseCase;
 
 	beforeEach(() => {
 		// Mock use cases
@@ -31,11 +33,16 @@ describe('D1DatabaseMCPServer', () => {
 			execute: vi.fn(),
 		} as unknown as SuggestOptimizationsUseCase;
 
+		mockCompareSchemasUseCase = {
+			execute: vi.fn(),
+		} as unknown as CompareSchemasUseCase;
+
 		server = new D1DatabaseMCPServer(
 			mockAnalyzeSchemaUseCase,
 			mockGetRelationshipsUseCase,
 			mockValidateSchemaUseCase,
 			mockSuggestOptimizationsUseCase,
+			mockCompareSchemasUseCase,
 		);
 
 		vi.clearAllMocks();

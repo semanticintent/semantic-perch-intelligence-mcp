@@ -9,6 +9,7 @@ const Environment_1 = require("../../domain/value-objects/Environment");
     let mockGetRelationshipsUseCase;
     let mockValidateSchemaUseCase;
     let mockSuggestOptimizationsUseCase;
+    let mockCompareSchemasUseCase;
     (0, vitest_1.beforeEach)(() => {
         // Mock use cases
         mockAnalyzeSchemaUseCase = {
@@ -23,7 +24,10 @@ const Environment_1 = require("../../domain/value-objects/Environment");
         mockSuggestOptimizationsUseCase = {
             execute: vitest_1.vi.fn(),
         };
-        server = new MCPServer_1.D1DatabaseMCPServer(mockAnalyzeSchemaUseCase, mockGetRelationshipsUseCase, mockValidateSchemaUseCase, mockSuggestOptimizationsUseCase);
+        mockCompareSchemasUseCase = {
+            execute: vitest_1.vi.fn(),
+        };
+        server = new MCPServer_1.D1DatabaseMCPServer(mockAnalyzeSchemaUseCase, mockGetRelationshipsUseCase, mockValidateSchemaUseCase, mockSuggestOptimizationsUseCase, mockCompareSchemasUseCase);
         vitest_1.vi.clearAllMocks();
     });
     (0, vitest_1.describe)('constructor', () => {

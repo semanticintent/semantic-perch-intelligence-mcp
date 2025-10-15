@@ -11,6 +11,7 @@ import { AnalyzeSchemaUseCase } from './application/use-cases/AnalyzeSchemaUseCa
 import { GetRelationshipsUseCase } from './application/use-cases/GetRelationshipsUseCase';
 import { ValidateSchemaUseCase } from './application/use-cases/ValidateSchemaUseCase';
 import { SuggestOptimizationsUseCase } from './application/use-cases/SuggestOptimizationsUseCase';
+import { CompareSchemasUseCase } from './application/use-cases/CompareSchemasUseCase';
 import { SchemaAnalyzer } from './domain/services/SchemaAnalyzer';
 import { RelationshipAnalyzer } from './domain/services/RelationshipAnalyzer';
 import { OptimizationService } from './domain/services/OptimizationService';
@@ -90,12 +91,15 @@ describe('Integration Tests', () => {
 			mockCache,
 		);
 
+		const compareSchemasUseCase = new CompareSchemasUseCase(mockRepository);
+
 		// Presentation layer
 		mcpServer = new D1DatabaseMCPServer(
 			analyzeSchemaUseCase,
 			getRelationshipsUseCase,
 			validateSchemaUseCase,
 			suggestOptimizationsUseCase,
+			compareSchemasUseCase,
 		);
 
 		vi.clearAllMocks();

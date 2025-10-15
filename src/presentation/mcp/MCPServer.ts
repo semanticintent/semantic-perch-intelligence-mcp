@@ -32,6 +32,7 @@ import { AnalyzeSchemaUseCase } from '../../application/use-cases/AnalyzeSchemaU
 import { GetRelationshipsUseCase } from '../../application/use-cases/GetRelationshipsUseCase.js';
 import { ValidateSchemaUseCase } from '../../application/use-cases/ValidateSchemaUseCase.js';
 import { SuggestOptimizationsUseCase } from '../../application/use-cases/SuggestOptimizationsUseCase.js';
+import { CompareSchemasUseCase } from '../../application/use-cases/CompareSchemasUseCase.js';
 import { parseEnvironment } from '../../domain/value-objects/Environment.js';
 
 /**
@@ -48,6 +49,7 @@ export class D1DatabaseMCPServer {
 		private readonly getRelationshipsUseCase: GetRelationshipsUseCase,
 		private readonly validateSchemaUseCase: ValidateSchemaUseCase,
 		private readonly suggestOptimizationsUseCase: SuggestOptimizationsUseCase,
+		private readonly compareSchemasUseCase: CompareSchemasUseCase,
 	) {
 		this.server = new Server(
 			{
@@ -152,6 +154,35 @@ export class D1DatabaseMCPServer {
 						required: ['environment'],
 					},
 				},
+				{
+					name: 'compare_schemas',
+					description:
+						'Compare database schemas between environments to detect drift and plan migrations with ICE-scored differences',
+					inputSchema: {
+						type: 'object',
+						properties: {
+							sourceDatabaseId: {
+								type: 'string',
+								description: 'Source database ID to compare from',
+							},
+							sourceEnvironment: {
+								type: 'string',
+								enum: ['development', 'staging', 'production'],
+								description: 'Source database environment',
+							},
+							targetDatabaseId: {
+								type: 'string',
+								description: 'Target database ID to compare to',
+							},
+							targetEnvironment: {
+								type: 'string',
+								enum: ['development', 'staging', 'production'],
+								description: 'Target database environment',
+							},
+						},
+						required: ['sourceDatabaseId', 'sourceEnvironment', 'targetDatabaseId', 'targetEnvironment'],
+					},
+				},
 			],
 		}));
 
@@ -167,6 +198,8 @@ export class D1DatabaseMCPServer {
 						return await this.handleValidateSchema(request.params.arguments);
 					case 'suggest_schema_optimizations':
 						return await this.handleSuggestOptimizations(request.params.arguments);
+					case 'compare_schemas':
+						return await this.handleCompareSchemas(request.params.arguments);
 					default:
 						throw new McpError(
 							ErrorCode.MethodNotFound,
@@ -263,6 +296,34 @@ export class D1DatabaseMCPServer {
 
 		const result = await this.suggestOptimizationsUseCase.execute({
 			environment: parseEnvironment(environment),
+		});
+
+		return {
+			content: [
+				{
+					type: 'text',
+					text: JSON.stringify(result, null, 2),
+				},
+			],
+		};
+	}
+
+	/**
+	 * Handle compare_schemas tool
+	 */
+	private async handleCompareSchemas(args: unknown) {
+		const { sourceDatabaseId, sourceEnvironment, targetDatabaseId, targetEnvironment } = args as {
+			sourceDatabaseId: string;
+			sourceEnvironment: string;
+			targetDatabaseId: string;
+			targetEnvironment: string;
+		};
+
+		const result = await this.compareSchemasUseCase.execute({
+			sourceDatabaseId,
+			sourceEnvironment: parseEnvironment(sourceEnvironment),
+			targetDatabaseId,
+			targetEnvironment: parseEnvironment(targetEnvironment),
 		});
 
 		return {

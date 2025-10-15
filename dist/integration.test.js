@@ -12,6 +12,7 @@ const AnalyzeSchemaUseCase_1 = require("./application/use-cases/AnalyzeSchemaUse
 const GetRelationshipsUseCase_1 = require("./application/use-cases/GetRelationshipsUseCase");
 const ValidateSchemaUseCase_1 = require("./application/use-cases/ValidateSchemaUseCase");
 const SuggestOptimizationsUseCase_1 = require("./application/use-cases/SuggestOptimizationsUseCase");
+const CompareSchemasUseCase_1 = require("./application/use-cases/CompareSchemasUseCase");
 const SchemaAnalyzer_1 = require("./domain/services/SchemaAnalyzer");
 const RelationshipAnalyzer_1 = require("./domain/services/RelationshipAnalyzer");
 const OptimizationService_1 = require("./domain/services/OptimizationService");
@@ -58,8 +59,9 @@ const TableInfo_1 = require("./domain/entities/TableInfo");
         const getRelationshipsUseCase = new GetRelationshipsUseCase_1.GetRelationshipsUseCase(mockRepository, relationshipAnalyzer, databaseConfig, mockCache);
         const validateSchemaUseCase = new ValidateSchemaUseCase_1.ValidateSchemaUseCase(mockRepository, schemaAnalyzer, databaseConfig, mockCache);
         const suggestOptimizationsUseCase = new SuggestOptimizationsUseCase_1.SuggestOptimizationsUseCase(mockRepository, optimizationService, relationshipAnalyzer, databaseConfig, mockCache);
+        const compareSchemasUseCase = new CompareSchemasUseCase_1.CompareSchemasUseCase(mockRepository);
         // Presentation layer
-        mcpServer = new MCPServer_1.D1DatabaseMCPServer(analyzeSchemaUseCase, getRelationshipsUseCase, validateSchemaUseCase, suggestOptimizationsUseCase);
+        mcpServer = new MCPServer_1.D1DatabaseMCPServer(analyzeSchemaUseCase, getRelationshipsUseCase, validateSchemaUseCase, suggestOptimizationsUseCase, compareSchemasUseCase);
         vitest_1.vi.clearAllMocks();
     });
     (0, vitest_1.describe)('Full Stack Integration', () => {

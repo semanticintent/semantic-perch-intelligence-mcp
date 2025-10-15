@@ -37,12 +37,14 @@ class D1DatabaseMCPServer {
     getRelationshipsUseCase;
     validateSchemaUseCase;
     suggestOptimizationsUseCase;
+    compareSchemasUseCase;
     server;
-    constructor(analyzeSchemaUseCase, getRelationshipsUseCase, validateSchemaUseCase, suggestOptimizationsUseCase) {
+    constructor(analyzeSchemaUseCase, getRelationshipsUseCase, validateSchemaUseCase, suggestOptimizationsUseCase, compareSchemasUseCase) {
         this.analyzeSchemaUseCase = analyzeSchemaUseCase;
         this.getRelationshipsUseCase = getRelationshipsUseCase;
         this.validateSchemaUseCase = validateSchemaUseCase;
         this.suggestOptimizationsUseCase = suggestOptimizationsUseCase;
+        this.compareSchemasUseCase = compareSchemasUseCase;
         this.server = new index_js_1.Server({
             name: 'semantic-perch-intelligence-mcp',
             version: '1.0.0',
@@ -137,6 +139,34 @@ class D1DatabaseMCPServer {
                         required: ['environment'],
                     },
                 },
+                {
+                    name: 'compare_schemas',
+                    description: 'Compare database schemas between environments to detect drift and plan migrations with ICE-scored differences',
+                    inputSchema: {
+                        type: 'object',
+                        properties: {
+                            sourceDatabaseId: {
+                                type: 'string',
+                                description: 'Source database ID to compare from',
+                            },
+                            sourceEnvironment: {
+                                type: 'string',
+                                enum: ['development', 'staging', 'production'],
+                                description: 'Source database environment',
+                            },
+                            targetDatabaseId: {
+                                type: 'string',
+                                description: 'Target database ID to compare to',
+                            },
+                            targetEnvironment: {
+                                type: 'string',
+                                enum: ['development', 'staging', 'production'],
+                                description: 'Target database environment',
+                            },
+                        },
+                        required: ['sourceDatabaseId', 'sourceEnvironment', 'targetDatabaseId', 'targetEnvironment'],
+                    },
+                },
             ],
         }));
         // Handle tool calls
@@ -151,6 +181,8 @@ class D1DatabaseMCPServer {
                         return await this.handleValidateSchema(request.params.arguments);
                     case 'suggest_schema_optimizations':
                         return await this.handleSuggestOptimizations(request.params.arguments);
+                    case 'compare_schemas':
+                        return await this.handleCompareSchemas(request.params.arguments);
                     default:
                         throw new types_js_1.McpError(types_js_1.ErrorCode.MethodNotFound, `Unknown tool: ${request.params.name}`);
                 }
@@ -224,6 +256,26 @@ class D1DatabaseMCPServer {
         const { environment } = args;
         const result = await this.suggestOptimizationsUseCase.execute({
             environment: (0, Environment_js_1.parseEnvironment)(environment),
+        });
+        return {
+            content: [
+                {
+                    type: 'text',
+                    text: JSON.stringify(result, null, 2),
+                },
+            ],
+        };
+    }
+    /**
+     * Handle compare_schemas tool
+     */
+    async handleCompareSchemas(args) {
+        const { sourceDatabaseId, sourceEnvironment, targetDatabaseId, targetEnvironment } = args;
+        const result = await this.compareSchemasUseCase.execute({
+            sourceDatabaseId,
+            sourceEnvironment: (0, Environment_js_1.parseEnvironment)(sourceEnvironment),
+            targetDatabaseId,
+            targetEnvironment: (0, Environment_js_1.parseEnvironment)(targetEnvironment),
         });
         return {
             content: [

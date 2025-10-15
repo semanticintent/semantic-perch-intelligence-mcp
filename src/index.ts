@@ -21,6 +21,7 @@ import { AnalyzeSchemaUseCase } from './application/use-cases/AnalyzeSchemaUseCa
 import { GetRelationshipsUseCase } from './application/use-cases/GetRelationshipsUseCase.js';
 import { ValidateSchemaUseCase } from './application/use-cases/ValidateSchemaUseCase.js';
 import { SuggestOptimizationsUseCase } from './application/use-cases/SuggestOptimizationsUseCase.js';
+import { CompareSchemasUseCase } from './application/use-cases/CompareSchemasUseCase.js';
 import { SchemaAnalyzer } from './domain/services/SchemaAnalyzer.js';
 import { RelationshipAnalyzer } from './domain/services/RelationshipAnalyzer.js';
 import { OptimizationService } from './domain/services/OptimizationService.js';
@@ -160,12 +161,15 @@ async function main() {
 			cache,
 		);
 
+		const compareSchemasUseCase = new CompareSchemasUseCase(repository);
+
 		// Presentation Layer - MCP Server
 		const mcpServer = new D1DatabaseMCPServer(
 			analyzeSchemaUseCase,
 			getRelationshipsUseCase,
 			validateSchemaUseCase,
 			suggestOptimizationsUseCase,
+			compareSchemasUseCase,
 		);
 
 		// Start the server
