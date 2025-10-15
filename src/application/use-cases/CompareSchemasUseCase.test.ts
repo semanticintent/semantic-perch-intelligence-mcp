@@ -4,6 +4,7 @@ import type { ICloudflareD1Repository } from '../../../src/domain/repositories/I
 import { DatabaseSchema } from '../../../src/domain/entities/DatabaseSchema';
 import { TableInfo } from '../../../src/domain/entities/TableInfo';
 import { Column } from '../../../src/domain/entities/Column';
+import { Environment } from '../../../src/domain/value-objects/Environment';
 
 describe('CompareSchemasUseCase', () => {
   let useCase: CompareSchemasUseCase;
@@ -39,8 +40,8 @@ describe('CompareSchemasUseCase', () => {
         createTestColumn('name', 'TEXT'),
       ]); // Missing email column
 
-      const sourceSchema = new DatabaseSchema('test-source', 'development', [sourceTable], new Date());
-      const targetSchema = new DatabaseSchema('test-target', 'production', [targetTable], new Date());
+      const sourceSchema = new DatabaseSchema('test-source', Environment.DEVELOPMENT, [sourceTable], new Date());
+      const targetSchema = new DatabaseSchema('test-target', Environment.PRODUCTION, [targetTable], new Date());
 
       vi.mocked(mockRepository.fetchDatabaseSchema)
         .mockResolvedValueOnce(sourceSchema)
@@ -63,7 +64,7 @@ describe('CompareSchemasUseCase', () => {
 
     it('should detect identical schemas', async () => {
       const table = createTestTable('users', [createTestColumn('id', 'INTEGER', true)]);
-      const schema = new DatabaseSchema('test-db', 'development', [table], new Date());
+      const schema = new DatabaseSchema('test-db', Environment.DEVELOPMENT, [table], new Date());
 
       vi.mocked(mockRepository.fetchDatabaseSchema).mockResolvedValue(schema);
 
@@ -90,7 +91,7 @@ describe('CompareSchemasUseCase', () => {
     });
 
     it('should fetch schemas from correct databases', async () => {
-      const schema = new DatabaseSchema('test-db', 'development', [createTestTable('test', [createTestColumn('id', 'INTEGER', true)])], new Date());
+      const schema = new DatabaseSchema('test-db', Environment.DEVELOPMENT, [createTestTable('test', [createTestColumn('id', 'INTEGER', true)])], new Date());
       vi.mocked(mockRepository.fetchDatabaseSchema).mockResolvedValue(schema);
 
       await useCase.execute({
@@ -108,7 +109,7 @@ describe('CompareSchemasUseCase', () => {
     it('should detect missing tables', async () => {
       const sourceSchema = new DatabaseSchema(
         'test-source',
-        'development',
+        Environment.DEVELOPMENT,
         [
           createTestTable('users', [createTestColumn('id', 'INTEGER', true)]),
           createTestTable('orders', [createTestColumn('id', 'INTEGER', true)]),
@@ -116,7 +117,7 @@ describe('CompareSchemasUseCase', () => {
         new Date()
       );
 
-      const targetSchema = new DatabaseSchema('test-target', 'production', [createTestTable('users', [createTestColumn('id', 'INTEGER', true)])], new Date());
+      const targetSchema = new DatabaseSchema('test-target', Environment.PRODUCTION, [createTestTable('users', [createTestColumn('id', 'INTEGER', true)])], new Date());
 
       vi.mocked(mockRepository.fetchDatabaseSchema)
         .mockResolvedValueOnce(sourceSchema)
@@ -135,7 +136,7 @@ describe('CompareSchemasUseCase', () => {
     });
 
     it('should measure execution time', async () => {
-      const schema = new DatabaseSchema('test-db', 'development', [createTestTable('test', [createTestColumn('id', 'INTEGER', true)])], new Date());
+      const schema = new DatabaseSchema('test-db', Environment.DEVELOPMENT, [createTestTable('test', [createTestColumn('id', 'INTEGER', true)])], new Date());
       vi.mocked(mockRepository.fetchDatabaseSchema).mockResolvedValue(schema);
 
       const output = await useCase.execute({
@@ -155,10 +156,10 @@ describe('CompareSchemasUseCase', () => {
         createTestColumn('email', 'TEXT'),
       ]);
 
-      const sourceSchema = new DatabaseSchema('test-source', 'development', [table], new Date());
+      const sourceSchema = new DatabaseSchema('test-source', Environment.DEVELOPMENT, [table], new Date());
       const targetSchema = new DatabaseSchema(
         'test-target',
-        'production',
+        Environment.PRODUCTION,
         [createTestTable('users', [createTestColumn('id', 'INTEGER', true)])],
         new Date()
       );
@@ -184,7 +185,7 @@ describe('CompareSchemasUseCase', () => {
     it('should handle complex multi-table comparison', async () => {
       const sourceSchema = new DatabaseSchema(
         'test-source',
-        'staging',
+        Environment.STAGING,
         [
           createTestTable('users', [
             createTestColumn('id', 'INTEGER', true),
@@ -199,7 +200,7 @@ describe('CompareSchemasUseCase', () => {
 
       const targetSchema = new DatabaseSchema(
         'test-target',
-        'production',
+        Environment.PRODUCTION,
         [
           createTestTable('users', [createTestColumn('id', 'INTEGER', true), createTestColumn('name', 'TEXT')]), // Missing email
           createTestTable('orders', [createTestColumn('id', 'INTEGER', true), createTestColumn('total', 'INTEGER')]), // Type mismatch
