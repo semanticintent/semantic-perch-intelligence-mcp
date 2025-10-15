@@ -1,18 +1,18 @@
-# Semantic D1 MCP
+# Semantic Perch Intelligence MCP
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![CI](https://github.com/semanticintent/semantic-d1-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/semanticintent/semantic-d1-mcp/actions/workflows/ci.yml)
+[![CI](https://github.com/semanticintent/semantic-perch-intelligence-mcp/actions/workflows/ci.yml/badge.svg)](https://github.com/semanticintent/semantic-perch-intelligence-mcp/actions/workflows/ci.yml)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue.svg)](https://www.typescriptlang.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-20.x+-green.svg)](https://nodejs.org/)
-[![Tests](https://img.shields.io/badge/tests-398%20passing-brightgreen.svg)](https://github.com/semanticintent/semantic-d1-mcp)
+[![Tests](https://img.shields.io/badge/tests-398%20passing-brightgreen.svg)](https://github.com/semanticintent/semantic-perch-intelligence-mcp)
 
 [![Semantic Intent](https://img.shields.io/badge/Pattern-Semantic%20Intent-blue.svg)](https://github.com/semanticintent)
 [![Hexagonal Architecture](https://img.shields.io/badge/Architecture-Hexagonal-purple.svg)](ARCHITECTURE.md)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
 
-> **Reference implementation of Semantic Intent as Single Source of Truth patterns**
+> **PerchIQX - Deep Insights. Database Intelligence.**
 >
-> A Model Context Protocol (MCP) server for Cloudflare D1 database introspection, demonstrating semantic anchoring, observable properties, and domain-driven design for AI-assisted database development.
+> A Model Context Protocol (MCP) server for Cloudflare D1 database introspection. Reference implementation of Semantic Intent patterns demonstrating semantic anchoring, observable properties, and domain-driven design for AI-assisted database development.
 
 ## 📚 Table of Contents
 
@@ -50,8 +50,8 @@ Built on research from [Semantic Intent as Single Source of Truth](https://githu
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/semanticintent/semantic-d1-mcp.git
-   cd semantic-d1-mcp
+   git clone https://github.com/semanticintent/semantic-perch-intelligence-mcp.git
+   cd semantic-perch-intelligence-mcp
    ```
 
 2. **Install dependencies**
@@ -240,10 +240,10 @@ Connect this MCP server to Claude Desktop for AI-assisted database development.
 ```json
 {
   "mcpServers": {
-    "semantic-d1": {
+    "semantic-perch": {
       "command": "node",
       "args": [
-        "/absolute/path/to/semantic-d1-mcp/dist/index.js"
+        "/absolute/path/to/semantic-perch-intelligence-mcp/dist/index.js"
       ],
       "env": {
         "CLOUDFLARE_ACCOUNT_ID": "your_account_id",
@@ -444,6 +444,7 @@ This codebase serves as a **reference implementation** for semantic intent patte
 ### Related Projects
 
 - [semantic-context-mcp](https://github.com/semanticintent/semantic-context-mcp) - Sibling reference implementation for context management
+- [semantic-chirp-intelligence-mcp](https://github.com/semanticintent/semantic-chirp-intelligence-mcp) - Fantasy hockey intelligence MCP (ChirpIQX)
 
 ---
 

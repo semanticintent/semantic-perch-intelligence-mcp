@@ -1,7 +1,7 @@
 {
-  "name": "@semanticintent/semantic-d1-mcp",
+  "name": "@semanticintent/semantic-perch-intelligence-mcp",
   "version": "2.0.0",
-  "description": "Reference implementation of Semantic Intent patterns for D1 Database introspection via MCP",
+  "description": "PerchIQX - Deep database intelligence for Cloudflare D1 via MCP. Reference implementation of Semantic Intent patterns.",
   "keywords": [
     "mcp",
     "semantic-intent",
@@ -10,17 +10,18 @@
     "database-introspection",
     "schema-analysis",
     "semantic-anchoring",
-    "hexagonal-architecture"
+    "hexagonal-architecture",
+    "perch-intelligence"
   ],
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/semanticintent/semantic-d1-mcp.git"
+    "url": "https://github.com/semanticintent/semantic-perch-intelligence-mcp.git"
   },
   "bugs": {
-    "url": "https://github.com/semanticintent/semantic-d1-mcp/issues"
+    "url": "https://github.com/semanticintent/semantic-perch-intelligence-mcp/issues"
   },
-  "homepage": "https://github.com/semanticintent/semantic-d1-mcp#readme",
+  "homepage": "https://github.com/semanticintent/semantic-perch-intelligence-mcp#readme",
   "author": "semanticintent",
   "main": "dist/index.js",
   "files": [

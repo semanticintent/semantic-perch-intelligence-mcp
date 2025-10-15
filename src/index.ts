@@ -108,7 +108,7 @@ async function main() {
 		// Validate environment
 		validateEnvironment();
 
-		console.error('🚀 Starting Semantic D1 MCP Server...');
+		console.error('🚀 Starting PerchIQX MCP Server...');
 
 		// Infrastructure Layer - External adapters
 		const cloudflareConfig = new CloudflareConfig(
@@ -170,7 +170,7 @@ async function main() {
 
 		// Start the server
 		await mcpServer.start();
-		console.error('✅ Semantic D1 MCP Server running on stdio');
+		console.error('✅ PerchIQX MCP Server running on stdio');
 	} catch (error) {
 		console.error('❌ Failed to start server:', error);
 		process.exit(1);

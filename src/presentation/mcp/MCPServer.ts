@@ -51,7 +51,7 @@ export class D1DatabaseMCPServer {
 	) {
 		this.server = new Server(
 			{
-				name: 'semantic-d1-mcp',
+				name: 'semantic-perch-intelligence-mcp',
 				version: '1.0.0',
 			},
 			{

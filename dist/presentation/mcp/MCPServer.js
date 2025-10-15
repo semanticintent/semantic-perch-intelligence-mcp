@@ -44,7 +44,7 @@ class D1DatabaseMCPServer {
         this.validateSchemaUseCase = validateSchemaUseCase;
         this.suggestOptimizationsUseCase = suggestOptimizationsUseCase;
         this.server = new index_js_1.Server({
-            name: 'semantic-d1-mcp',
+            name: 'semantic-perch-intelligence-mcp',
             version: '1.0.0',
         }, {
             capabilities: {
