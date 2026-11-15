@@ -36,7 +36,8 @@ import { Environment } from './domain/value-objects/Environment.js';
  * Load environment configuration
  * Silent mode to prevent stdout pollution (MCP uses stdio for communication)
  */
-dotenv.config({ debug: false });
+// dotenv 17 logs to stdout unless quiet; `debug: false` alone does not silence it.
+dotenv.config({ quiet: true });
 
 /**
  * Validate required environment variables
