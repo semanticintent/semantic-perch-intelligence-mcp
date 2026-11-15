@@ -1,3 +1,5 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 /**
  * MCPServer.ts
  *
@@ -35,6 +37,9 @@ import { SuggestOptimizationsUseCase } from '../../application/use-cases/Suggest
 import { CompareSchemasUseCase } from '../../application/use-cases/CompareSchemasUseCase.js';
 import { parseEnvironment } from '../../domain/value-objects/Environment.js';
 
+// Reported to MCP clients; read from package.json so it cannot drift (3 levels up from src/ or dist/).
+const PACKAGE_VERSION: string = JSON.parse(readFileSync(join(__dirname, '..', '..', '..', 'package.json'), 'utf-8')).version;
+
 /**
  * MCP Server for D1 Database introspection
  *
@@ -54,7 +59,7 @@ export class D1DatabaseMCPServer {
 		this.server = new Server(
 			{
 				name: 'semantic-perch-intelligence-mcp',
-				version: '1.0.0',
+				version: PACKAGE_VERSION,
 			},
 			{
 				capabilities: {
